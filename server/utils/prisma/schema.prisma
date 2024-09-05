@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id       String   @id @default(uuid())
+  username String
+  email    String   @unique
+  password String
+  image    String   @default("https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg")
+  chats    Chat[]   @relation("userChats")
+  messages Message[]
+  isAdmin  Chat[]   @relation("adminChats")
+}
+
+model Message {
+  id         String @id @default(uuid())
+  sender     Users  @relation(fields: [senderId], references: [id])
+  senderId   String
+  content    String
+  chat       Chat   @relation(fields: [chatId], references: [id])
+  chatId     String
+  latestChats Chat[] @relation("latestMessage")
+}
+
+model Chat {
+  id             String    @id @default(uuid())
+  chatName       String
+  isGroupChat    Boolean   @default(false)
+  users          Users[]   @relation("userChats")
+  latestMessage  Message?  @relation("latestMessage", fields: [messageId], references: [id])
+  messageId      String?
+  isGroupAdmin   Users?    @relation("adminChats", fields: [adminId], references: [id])
+  adminId        String?
+  createdAt      DateTime  @default(now())
+  messages       Message[]
+}
