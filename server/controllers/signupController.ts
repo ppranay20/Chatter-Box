@@ -27,7 +27,8 @@ export const signupController = async (req : Request,res : Response) => {
                 email : data.email,
                 password : hashedPassword,
                 image : data.image
-            }
+            },
+            select : {id : true , username : true , email : true , image : true}
         })
 
         const token = await jwt.sign({id : user.id} , process.env.JWT_SECRET!)
@@ -36,6 +37,7 @@ export const signupController = async (req : Request,res : Response) => {
             res.json({
                 success : true,
                 token : token,
+                user : user,
                 message : "Account Created Successfully"
             })
         }

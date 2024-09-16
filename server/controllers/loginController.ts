@@ -17,11 +17,11 @@ export const loginController = async (req : Request,res : Response) => {
                 message : "Bad Credentials"
             })
         }
-    
+        
         const isUserExist = await prisma.users.findUnique({
             where : {
                 email : data.email
-            }
+            },
         })
     
         if(!isUserExist){
@@ -35,9 +35,17 @@ export const loginController = async (req : Request,res : Response) => {
 
         const token = await jwt.sign({id : isUserExist.id},process.env.JWT_SECRET!);
 
+        const user = {
+            id : isUserExist.id,
+            email : isUserExist.email,
+            username : isUserExist.username,
+            image : isUserExist.image
+        }
+
         if(isTrueUser){
             return res.json({
                 success : true,
+                user : user,
                 token : token,
                 message : "Loggin in Successfully"
             })

@@ -41,7 +41,8 @@ export default function Signup() {
 
             const res = await axios.post("http://localhost:3000/api/auth/signup",formData);
             if(res.data.success){
-                localStorage.setItem("token",res.data.token);
+                localStorage.setItem("userInfo",JSON.stringify(res.data.user));
+                localStorage.setItem("token",res.data.token)
                 toast.success(res.data.message,{
                     position : "top-right"
                 })

@@ -1,6 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import {Request,Response} from 'express'
-import { connect } from "http2";
+
+interface userType {
+    id : string,
+    username : string,
+    email : string,
+    image : string
+}
 
 const prisma = new PrismaClient();
 
@@ -37,7 +43,7 @@ export const accessChat = async (req : Request , res : Response) => {
                 latestMessage : {
                     include : {
                         sender : {
-                            select : {username : true , email : true , image : true}
+                            select : {id : true,username : true , email : true , image : true}
                         }
                     }
                 }
@@ -65,12 +71,12 @@ export const accessChat = async (req : Request , res : Response) => {
             data: chatData,
             include : {
                 users : {
-                    select : {username : true , email : true , image : true}
+                    select : { id : true ,username : true , email : true , image : true}
                 },
                 latestMessage : {
                     include : {
                         sender : {
-                            select : {username : true , email : true , image : true}
+                            select : {id : true,username : true , email : true , image : true}
                         }
                     }
                 }
@@ -103,15 +109,16 @@ export const fetchChats = async (req : Request , res : Response) => {
             },
             include : {
                 users : {
-                    select : { username : true , email : true , image : true}
+                    select : {id : true, username : true , email : true , image : true}
                 },
                 isGroupAdmin : {
-                    select : { username : true , email : true , image : true}
+                    select : {id : true, username : true , email : true , image : true}
                 },
                 latestMessage : {
                     select : {
                         sender : {
                             select : {
+                                id : true,
                                 email : true,
                                 username : true,
                                 image : true
@@ -135,7 +142,7 @@ export const fetchChats = async (req : Request , res : Response) => {
 }
 
 export const createGroupChat = async (req : Request , res : Response) => {
-    if(!req.body.name || req.body.users){
+    if(!req.body.name || !req.body.users){
         return res.json({
             success : false,
             message : "Fill the fields"
@@ -156,16 +163,20 @@ export const createGroupChat = async (req : Request , res : Response) => {
         })
     }
 
-    const groupParticipants = req.body.users;
+    const groupParticipants = req.body.users.map((user : userType) => user.id);
     groupParticipants.push(req.user.id);
 
     try{
         const groupChat = await prisma.chat.create({
             data : {
                 chatName : req.body.name,
-                users : groupParticipants,
+                users : {
+                    connect : groupParticipants.map((user : {id : string}) => {return {id : user}})
+                },
                 isGroupChat : true,
-                isGroupAdmin : req.body.id
+                isGroupAdmin : {
+                    connect : {id : req.user.id}
+                }
             }
         })
         
@@ -175,10 +186,10 @@ export const createGroupChat = async (req : Request , res : Response) => {
             },
             include : {
                 users : {
-                    select : {username : true , email : true, image : true}
+                    select : {id : true , username : true , email : true, image : true}
                 },
                 isGroupAdmin : {
-                    select : {username : true, email : true , image : true}
+                    select : {id : true , username : true, email : true , image : true}
                 }
             }
         })
@@ -211,10 +222,10 @@ export const renameGroup = async (req : Request , res : Response) => {
             },
             include : {
                 users : {
-                    select : {username : true , email : true , image : true}
+                    select : {id : true , username : true , email : true , image : true}
                 },
                 isGroupAdmin : {
-                    select : {username : true , email : true , image : true}
+                    select : {id : true , username : true , email : true , image : true}
                 }
             }
         })
@@ -228,7 +239,8 @@ export const renameGroup = async (req : Request , res : Response) => {
         else{
             return res.json({
                 success : true,
-                message : "Name Updated"
+                data : newGroupName,
+                message : "Group Name Updated"
             })
         }
 
@@ -282,10 +294,10 @@ export const addToGroup = async (req : Request , res : Response) => {
             },
             include : {
                 users : {
-                    select : {username : true , email : true , image : true}
+                    select : {id : true , username : true , email : true , image : true}
                 },
                 isGroupAdmin : {
-                    select : {username : true , email : true , image : true}
+                    select : {id : true , username : true , email : true , image : true}
                 }
             }
         })
@@ -299,6 +311,7 @@ export const addToGroup = async (req : Request , res : Response) => {
 
         return res.json({
             success : true,
+            users : addUser,
             message : "User Added"
         })
     }catch(err){
@@ -313,6 +326,7 @@ export const removeFromGroup = async (req : Request , res : Response) => {
             message : "data not provided"
         })
     }
+
 
     if(!req.user){
         return res.json({
@@ -351,10 +365,10 @@ export const removeFromGroup = async (req : Request , res : Response) => {
             },
             include : {
                 users : {
-                    select : {username : true , email : true , image : true}
+                    select : {id : true , username : true , email : true , image : true}
                 },
                 isGroupAdmin : {
-                    select : {username : true , email : true , image : true}
+                    select : {id : true , username : true , email : true , image : true}
                 }
             }
         })
@@ -368,6 +382,7 @@ export const removeFromGroup = async (req : Request , res : Response) => {
 
         return res.json({
             success : true,
+            users : removeUser,
             message : "User Added"
         })
         

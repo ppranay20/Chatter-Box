@@ -28,7 +28,8 @@ export default function Signin() {
         try {
             const res = await axios.post("http://localhost:3000/api/auth/login",authData);
             if(res.data.success){
-                localStorage.setItem("token",res.data.token);
+                localStorage.setItem("userInfo",JSON.stringify(res.data.user));
+                localStorage.setItem("token",res.data.token)
                 toast.success(res.data.message,{
                     position : "top-right"
                 })
@@ -54,7 +55,7 @@ export default function Signin() {
             <form onSubmit={handleLogin}>
                 <div className="flex flex-col gap-1">
                     <label htmlFor="email">Email:</label>
-                    <input type="email" name="username" onChange={onChangeHandler} placeholder="Enter your password" className="bg-[#f0f1f5] rounded-md outline-blue-600 py-1 px-2 mb-3" />
+                    <input type="email" name="email" onChange={onChangeHandler} placeholder="Enter your password" className="bg-[#f0f1f5] rounded-md outline-blue-600 py-1 px-2 mb-3" />
                 </div>
                 <div className="flex flex-col gap-1">
                     <label htmlFor="password">Password:</label>

@@ -3,20 +3,62 @@ import { Request,Response } from 'express';
 import 'dotenv/config'
 import userRouter from './routes/userRoutes';
 import chatRouter from './routes/chatRoutes';
+import messageRouter from './routes/messageRoutes';
 import cors from 'cors';
+import {Server} from 'socket.io';
+import { createServer } from 'http';
 
 const app = express();
 const PORT = 3000;
+const httpServer = createServer(app);
+const io = new Server(httpServer,{
+    pingTimeout : 30000,
+    cors : {
+        origin : "http://localhost:5173"
+    }
+});
 
 app.use(express.json());
 app.use(cors());
 app.use("/api/auth",userRouter);
 app.use("/api/chat",chatRouter);
+app.use("/api/message",messageRouter);
 
 app.get("/",(req : Request , res : Response) => {
     res.send("Hello World");
 })
 
-app.listen(PORT,() => {
+io.on("connection",(socket) => {
+    console.log("connected to socket.io");
+    socket.on('setup',(user) => {
+        if(user){
+            socket.join(user.id);
+        }
+    })
+
+    socket.on('join-room',(room) => {
+        console.log("user joined room " + room)
+        socket.join(room);
+    })
+
+    socket.on('new-message',(message) => {
+        let chat = message.chat;
+        if(!chat.users) console.log("No users in current chat");
+
+        chat.users.forEach((user : any) => {
+            if(user.id === message.sender.id) return;
+            
+            console.log("message Received" + JSON.stringify(message) )
+            socket.to(user.id).emit('message-received',message);
+        })
+    })
+
+    socket.off('setup',(user) => {
+        console.log("User disconnected")
+        socket.leave(user.id)
+    })
+})
+
+httpServer.listen(PORT,() => {
     console.log("Server is running in port " + PORT)
 })
