@@ -37,7 +37,7 @@ export default function SideDrawer() {
 
         return;
       }
-      const res = await axios.get(`http://localhost:3000/api/auth?search=${search}`,{
+      const res = await axios.get(`https://chatter-box-fsso.onrender.com/api/auth?search=${search}`,{
         headers : {
           Authorization : localStorage.getItem("token")
         }
@@ -68,7 +68,7 @@ export default function SideDrawer() {
   
   const accessChats = async (userId: string) => {
     try {
-      const res = await axios.post("http://localhost:3000/api/chat",{userId : userId},{
+      const res = await axios.post("https://chatter-box-fsso.onrender.com/api/chat",{userId : userId},{
         headers : {
           Authorization : localStorage.getItem("token")
         }

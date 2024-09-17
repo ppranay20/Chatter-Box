@@ -36,7 +36,7 @@ export default function UserProfile() {
         }
         setGroupLoading(true);
         try{
-            const res = await axios.put("http://localhost:3000/api/chat/groupremove",{
+            const res = await axios.put("https://chatter-box-fsso.onrender.com/api/chat/groupremove",{
                 chatId : selectedChat?.id,
                 userId : user1?.id 
             },{
@@ -88,7 +88,7 @@ export default function UserProfile() {
         }
 
         try{
-            const res = await axios.put("http://localhost:3000/api/chat/groupadd",{
+            const res = await axios.put("https://chatter-box-fsso.onrender.com/api/chat/groupadd",{
                 chatId : selectedChat?.id,
                 userId : newUser?.id
             },{
@@ -121,7 +121,7 @@ export default function UserProfile() {
         setRenameLoading(true);
 
         try{
-            const res = await axios.put("http://localhost:3000/api/chat/rename",{
+            const res = await axios.put("https://chatter-box-fsso.onrender.com/api/chat/rename",{
                 name : groupChatName,
                 id : selectedChat?.id
             },{
@@ -158,7 +158,7 @@ export default function UserProfile() {
         setLoading(true);
 
         try{
-            const res = await axios.get(`http://localhost:3000/api/auth?search=${query}`,{
+            const res = await axios.get(`https://chatter-box-fsso.onrender.com/api/auth?search=${query}`,{
                 headers : {
                     Authorization : localStorage.getItem("token")
                 }

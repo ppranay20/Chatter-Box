@@ -39,7 +39,7 @@ export default function Signup() {
             formData.append("password",authData.password);
             formData.append("image",image)
 
-            const res = await axios.post("http://localhost:3000/api/auth/signup",formData);
+            const res = await axios.post("https://chatter-box-fsso.onrender.com/api/auth/signup",formData);
             if(res.data.success){
                 localStorage.setItem("userInfo",JSON.stringify(res.data.user));
                 localStorage.setItem("token",res.data.token)

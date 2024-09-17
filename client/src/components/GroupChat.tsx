@@ -30,7 +30,7 @@ export default function GroupChat() {
         setLoading(true);
 
         try{
-            const res = await axios.get(`http://localhost:3000/api/auth?search=${query}`,{
+            const res = await axios.get(`https://chatter-box-fsso.onrender.com/api/auth?search=${query}`,{
                 headers : {
                     Authorization : localStorage.getItem("token")
                 }
@@ -59,7 +59,7 @@ export default function GroupChat() {
         }
 
         try{
-            const res = await axios.post("http://localhost:3000/api/chat/group",{
+            const res = await axios.post("https://chatter-box-fsso.onrender.com/api/chat/group",{
                 name : groupName,
                 users : selectedUsers
             }, {

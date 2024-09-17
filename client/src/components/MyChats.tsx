@@ -25,7 +25,7 @@ const {setSelectedChat,setChats,chats,selectedChat,setNewGroupChat,fetchAgain} =
   const fetchChats = async () => {
     setLoading(true);
     try{
-      const res = await axios.get("http://localhost:3000/api/chat",{
+      const res = await axios.get("https://chatter-box-fsso.onrender.com/api/chat",{
         headers : {
           Authorization : localStorage.getItem("token")
         }

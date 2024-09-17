@@ -10,7 +10,7 @@ import { messageType } from "../utils/types";
 import Spinner from "./Spinner";
 import io from 'socket.io-client';
 
-const ENDPOINT = "http://localhost:3000";
+const ENDPOINT = "https://chatter-box-fsso.onrender.com";
 let socket : any;
 
 export default function ChatBox() {
@@ -50,7 +50,7 @@ export default function ChatBox() {
     try{
       const tempMessage = newMessage;
       setNewMessage("");
-      const res = await axios.post("http://localhost:3000/api/message",{
+      const res = await axios.post("https://chatter-box-fsso.onrender.com/api/message",{
         chatId : selectedChat?.id,
         content : tempMessage
       },{
@@ -71,7 +71,7 @@ export default function ChatBox() {
   const fetchMessage = async () => {
     setLoading(true);
     try{
-      const res = await axios.get(`http://localhost:3000/api/message/${selectedChat?.id}`,{
+      const res = await axios.get(`https://chatter-box-fsso.onrender.com/api/message/${selectedChat?.id}`,{
         headers : {
           Authorization : localStorage.getItem("token")
         }

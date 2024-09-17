@@ -30,7 +30,7 @@ export default function Chats({messages} : {messages : messageType[]}) {
                 <div key={index} className={`flex items-center my-2 gap-2 ${message.senderId === user.id ? 'justify-end' : 'justify-start'}`}>
                     {
                         ((isSameSender(messages,message,index,user.id) || isLastMessage(messages,index,user.id)) &&
-                            <img className="w-9 h-9 rounded-full" src={`http://localhost:3000/image/${message.sender.image}`} alt="Rounded avatar" />
+                            <img className="w-9 h-9 rounded-full" src={`https://chatter-box-fsso.onrender.com/image/${message.sender.image}`} alt="Rounded avatar" />
                         )
                     }
                     <span className={`${message.sender.id === user.id ? "bg-[#BEE3F8]" : "bg-[#B9F5D0]"} px-3 py-2 rounded-lg text-sm` }>{message.content}</span>
