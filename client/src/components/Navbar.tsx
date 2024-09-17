@@ -83,7 +83,7 @@ export default function Navbar() {
              }   
              </AnimatePresence>
             <div className={`flex items-center gap-2 hover:bg-gray-200 hover:rounded-md px-3 py-1 ${dropdown ? "bg-gray-200 rounded-md" : ""}`}>
-                <img className="w-9 h-9 rounded-full" src="https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" alt="Rounded avatar" />
+                <img className="w-9 h-9 rounded-full" src={`http://localhost:3000/image/${user?.image}`} alt="Rounded avatar" />
                 <FaAngleDown onClick={() => setDropdown(!dropdown)} className="cursor-pointer" />
             </div>
             <AnimatePresence>

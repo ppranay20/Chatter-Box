@@ -125,7 +125,7 @@ export default function GroupChat() {
                 {
                     loading ? <div className="relative left-40 top-2"><Spinner></Spinner></div> : (searchResult.slice(0,4).map((data,index) => {
                         return(
-                            <UserProfileCard key={index} username={data.username} email={data.email} image={data.email} handleFunction={() => addToGroup(data)}></UserProfileCard>
+                            <UserProfileCard key={index} username={data.username} email={data.email} image={data.image} handleFunction={() => addToGroup(data)}></UserProfileCard>
                         )
                     }))
                 }

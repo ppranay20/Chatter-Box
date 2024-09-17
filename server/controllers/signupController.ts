@@ -20,6 +20,19 @@ export const signupController = async (req : Request,res : Response) => {
         }
     
         const hashedPassword = await bcrypt.hash(data.password,10);
+
+        const isUserExist = await prisma.users.findUnique({
+            where : {
+                email : data.email
+            }
+        })
+
+        if(isUserExist){
+            return res.json({
+                success : false,
+                message : "User already exist"
+            })
+        }
     
         const user = await prisma.users.create({
             data : {

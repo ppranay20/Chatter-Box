@@ -23,12 +23,9 @@ app.use(cors());
 app.use("/api/auth",userRouter);
 app.use("/api/chat",chatRouter);
 app.use("/api/message",messageRouter);
+app.use('/image',express.static('uploads'));
 
-app.get("/",(req : Request , res : Response) => {
-    res.send("Hello World");
-})
-
-io.on("connection",(socket) => {
+io.on('connection',(socket) => {
     console.log("connected to socket.io");
     socket.on('setup',(user) => {
         if(user){
@@ -37,8 +34,8 @@ io.on("connection",(socket) => {
     })
 
     socket.on('join-room',(room) => {
-        console.log("user joined room " + room)
         socket.join(room);
+        console.log("user joined room " + room)
     })
 
     socket.on('new-message',(message) => {
@@ -48,8 +45,7 @@ io.on("connection",(socket) => {
         chat.users.forEach((user : any) => {
             if(user.id === message.sender.id) return;
             
-            console.log("message Received" + JSON.stringify(message) )
-            socket.to(user.id).emit('message-received',message);
+            socket.in(user.id).emit('message-received',message);
         })
     })
 

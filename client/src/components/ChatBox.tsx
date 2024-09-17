@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { FaEye } from "react-icons/fa";
 import { ChatContext } from "../context/chatProvider"
-import { selectedChatType, userType } from "../utils/types";
+import { userType } from "../utils/types";
 import { FaArrowRight } from "react-icons/fa6";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -11,8 +11,7 @@ import Spinner from "./Spinner";
 import io from 'socket.io-client';
 
 const ENDPOINT = "http://localhost:3000";
-const socket = io(ENDPOINT);
-let latestSelectedChat : selectedChatType | null;
+let socket : any;
 
 export default function ChatBox() {
   const chatContext = useContext(ChatContext);
@@ -25,8 +24,9 @@ export default function ChatBox() {
   const { user,selectedChat,setShowSendersProfile,setSenderDetails,setShowGroupModal,notification,setNotification,fetchAgain,setFetchAgain } = chatContext;
   
   useEffect(() => {
+    socket = io(ENDPOINT);
     socket.emit("setup",user);
-  },[])
+  },[user])
   
   const getSenderDetails = (loggedUser : userType , users : userType[]) => {
     if(users[0].id === loggedUser.id){
@@ -44,13 +44,15 @@ export default function ChatBox() {
       toast.error("Enter some message",{
         position : 'top-center'
       })
+      return;
     }
     
     try{
+      const tempMessage = newMessage;
       setNewMessage("");
       const res = await axios.post("http://localhost:3000/api/message",{
         chatId : selectedChat?.id,
-        content : newMessage
+        content : tempMessage
       },{
         headers : {
           Authorization : localStorage.getItem("token")
@@ -58,8 +60,8 @@ export default function ChatBox() {
       })
       
       if(res.data.success){
-        socket.emit("new-message",res.data._message);
-        setMessages([...messages,res.data._message]);
+        socket.emit('new-message',res.data._message);
+        setMessages((prevMessage) =>  [...prevMessage,res.data._message]);
       }
     }catch(err){
       console.log(err)
@@ -77,36 +79,34 @@ export default function ChatBox() {
       
       if(res.data.success){
         setMessages(res.data.messages);
-        setLoading(false);
         socket.emit('join-room',selectedChat?.id)
       }
     }catch(err){
       console.log(err)
     }
+    setLoading(false);
   }
   
   useEffect(() => {
     if(!selectedChat || !selectedChat.id) return;
     fetchMessage();
 
-    latestSelectedChat=selectedChat;
   },[selectedChat])
 
 
   useEffect(() => {
-      socket.on('message-received',(message) => {
+      socket.on('message-received',(message : messageType) => {
       
-      if(!latestSelectedChat || latestSelectedChat.id !== message.chat.id){
+      if(!selectedChat || selectedChat.id !== message.chat.id){
         if(!notification.includes(message)){
           setNotification((prevState) => [message,...prevState]);
           setFetchAgain(!fetchAgain);
         }
       } else{
-        console.log(message)
         setMessages((prevMessage) => [...prevMessage,message])
       }
     })
-  })
+  },[notification,selectedChat,fetchAgain])
   
   
   return (
@@ -135,7 +135,7 @@ export default function ChatBox() {
               {loading ? <div className="flex justify-center items-center h-full"><Spinner></Spinner></div>  : <div className="px-3"><Chats messages={messages} /></div>}
             </div>
             <form className="flex gap-2 items-end pb-2 px-3" onSubmit={sendMessage}>
-                <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendMessage(e)} className="bg-[#E0E0E0] py-2 rounded-md px-3 w-full  outline-blue-500" size={88} placeholder="Enter a message..." />
+                <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} className="bg-[#E0E0E0] py-2 rounded-md px-3 w-full  outline-blue-500" size={88} placeholder="Enter a message..." />
                 <button type="submit" className="border rounded-full bg-white px-2 py-2"><FaArrowRight /></button>
             </form>
           </div>
