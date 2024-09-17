@@ -14,7 +14,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer,{
     pingTimeout : 30000,
     cors : {
-        origin : "http://localhost:5173"
+        origin : "https://chatter-box-9nej.onrender.com/"
     }
 });
 
