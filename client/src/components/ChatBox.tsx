@@ -24,10 +24,10 @@ export default function ChatBox() {
   const { user,selectedChat,setShowSendersProfile,setSenderDetails,setShowGroupModal,notification,setNotification,fetchAgain,setFetchAgain } = chatContext;
   
   useEffect(() => {
-    socket = io(ENDPOINT,[
+    socket = io(ENDPOINT,{
       transports : ['websocket','polling'],
       secure : true,
-    ]);
+    });
     socket.emit("setup",user);
   },[user])
   
