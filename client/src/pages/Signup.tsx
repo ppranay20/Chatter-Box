@@ -75,7 +75,7 @@ export default function Signup() {
                 </div>
                 <div className="flex flex-col gap-1">
                     <label htmlFor="email">Email:</label>
-                    <input type="email" name="email" placeholder="Enter your password" required className="bg-[#f0f1f5] rounded-md outline-blue-600 py-1 px-2 mb-3" onChange={onChangeHandler} />
+                    <input type="email" name="email" placeholder="Enter your email" required className="bg-[#f0f1f5] rounded-md outline-blue-600 py-1 px-2 mb-3" onChange={onChangeHandler} />
                 </div>
                 <div className="flex flex-col gap-1">
                     <label htmlFor="password">Password:</label>
